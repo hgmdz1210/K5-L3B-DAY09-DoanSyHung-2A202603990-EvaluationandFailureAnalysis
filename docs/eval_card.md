@@ -2,8 +2,8 @@
 
 Card này đi kèm mỗi báo cáo và được dùng lại ở Day 10. Mọi con số dưới đây lấy từ report do `python -m lab9.eval` sinh ra (dẫn run ID), không gõ tay.
 
-- **Run ID / eval set SHA:** baseline `E-swarm-20261118-871b` · eval set `871b18913639` (`src/reports/baseline_v1.json`)
-- **Phiên bản:** code: nhánh `starter/d09` (code Day 8 gốc + `src/lab9/` đã hoàn thành M1–M4) · eval set v1 (sha `871b18913639`) · `metric_spec_version` 1.0 · grader `lab9.graders.GRADERS` (cùng commit) · seeds 11/22/33/44/55 · MockLLM · Python 3.12 (máy) / 3.13 (CI)
+- **Run ID / eval set SHA:** baseline `E-swarm-20261118-50fa` · eval set `50fa2fc800aa` (`src/reports/baseline_v1.json`)
+- **Phiên bản:** code: nhánh `starter/d09` (code Day 8 gốc + `src/lab9/` đã hoàn thành M1–M4) · eval set v1 (sha `50fa2fc800aa`) · `metric_spec_version` 1.0 · grader `lab9.graders.GRADERS` (cùng commit) · seeds 11/22/33/44/55 · MockLLM · Python 3.12 (máy) / 3.13 (CI)
 - **Eval set:** v1, 14 item × 5 seed = 70 trial/shape, nguồn `lab8_public` (ma trận T01–T14); nhãn tách riêng trong `labels_v1.json`, không inline trong item. Mỗi item có `failure_modes` theo `docs/failure_taxonomy.md`; `provenance.checked_by` ghi người đã đối chiếu nhãn với trace (`lab9.trace_case`, 5 seed). `evalset --check`: 0 problem.
 
 ## Metric & ngưỡng (trích `config/metric_spec.yaml`)
@@ -24,12 +24,12 @@ Card này đi kèm mỗi báo cáo và được dùng lại ở Day 10. Mọi co
 ## Kết quả baseline vs PR
 | Shape (run ID) | pass_rate | Δ pass_rate [CI 95%] | refund_amount_correct | reply_matches_ledger | approval_bypass / secret_leak | Gate |
 |---|---|---|---|---|---|---|
-| `swarm` baseline (`E-swarm-20261118-871b`) | 0.9857 | — | 0.9857 | 1.0 | 0 / 0 | — |
-| `fixed` (`E-fixed-20261118-871b`) | 1.0 | +0.014 [+0.000, +0.043] | 1.0 | 1.0 | 0 / 0 | **exit 0, merge** |
-| `seeded_regression` (`E-seeded_regression-20261118-871b`) | 0.7143 | **−0.271 [−0.500, −0.057]** | 0.8571 (Δ −0.129 [−0.315, +0.000]) | 0.7857 | 0 / 0 | **exit 1**, blocked: `refund_amount_correct, pass_rate, reply_matches_ledger` |
-| `honest_refactor` (`E-honest_refactor-20261118-871b`) | 1.0 | +0.014 [+0.000, +0.043] | 1.0 | 1.0 | 0 / 0 | exit 0 (không báo nhầm) |
-| `flaky_regression` (`E-flaky_regression-20261118-871b`) | 0.9 | −0.086 [−0.143, −0.014] | 0.9429 | 1.0 | 0 / 0 | exit 1 (`refund_amount_correct, pass_rate`) |
-| `slice_regression` (`E-slice_regression-20261118-871b`) | 0.9571 | −0.029 [−0.129, +0.043] | 0.9571 | 1.0 | 0 / 0 | **exit 0: lọt qua gate v1** |
+| `swarm` baseline (`E-swarm-20261118-50fa`) | 0.9857 | — | 0.9857 | 1.0 | 0 / 0 | — |
+| `fixed` (`E-fixed-20261118-50fa`) | 1.0 | +0.014 [+0.000, +0.043] | 1.0 | 1.0 | 0 / 0 | **exit 0, merge** |
+| `seeded_regression` (`E-seeded_regression-20261118-50fa`) | 0.7143 | **−0.271 [−0.500, −0.057]** | 0.8571 (Δ −0.129 [−0.315, +0.000]) | 0.7857 | 0 / 0 | **exit 1**, blocked: `refund_amount_correct, pass_rate, reply_matches_ledger` |
+| `honest_refactor` (`E-honest_refactor-20261118-50fa`) | 1.0 | +0.014 [+0.000, +0.043] | 1.0 | 1.0 | 0 / 0 | exit 0 (không báo nhầm) |
+| `flaky_regression` (`E-flaky_regression-20261118-50fa`) | 0.9 | −0.086 [−0.143, −0.014] | 0.9429 | 1.0 | 0 / 0 | exit 1 (`refund_amount_correct, pass_rate`) |
+| `slice_regression` (`E-slice_regression-20261118-50fa`) | 0.9571 | −0.029 [−0.129, +0.043] | 0.9571 | 1.0 | 0 / 0 | **exit 0: lọt qua gate v1** |
 
 - Baseline `swarm` không hoàn hảo: 1/70 trial fail (`C-002@55`), vì shape tham chiếu tin ticket khi `seed % 5 == 0` (FM-03).
 - Grader M3 trên các variant lỗi phát hiện 35/35 trace lỗi (30/30 trial grader Lab 8 FAIL, cộng 5 trial reply sai ledger mà grader Lab 8 bỏ lọt: `seeded_regression C-008@*`), báo nhầm 0/70 trên `fixed` và 0/70 trên `honest_refactor`.
@@ -41,7 +41,7 @@ Card này đi kèm mỗi báo cáo và được dùng lại ở Day 10. Mọi co
 - Tiền và approval luôn chấm bằng code, không bằng judge.
 
 ## Trace case
-`docs/trace_case.md`: `seeded_regression C-002@11` (run `E-seeded_regression-20261118-871b`). Bước sai đầu tiên là **event 3 `model_override {delay_days: 5}`** (DB ghi 2 ngày), FM-03. Event 4 (quote 20.000đ) và event 6 (reply "đã hoàn 20.000đ") là hệ quả. Regression test: `src/tests/test_lab9_trace_case.py` (3 test, gồm đối chứng `fixed` và `swarm@55`).
+`docs/trace_case.md`: `seeded_regression C-002@11` (run `E-seeded_regression-20261118-50fa`). Bước sai đầu tiên là **event 3 `model_override {delay_days: 5}`** (DB ghi 2 ngày), FM-03. Event 4 (quote 20.000đ) và event 6 (reply "đã hoàn 20.000đ") là hệ quả. Regression test: `src/tests/test_lab9_trace_case.py` (3 test, gồm đối chứng `fixed` và `swarm@55`).
 
 ## Vận hành
 - **Gate owner:** Doan Sy Hung (eval owner của bài này). Khi gate exit 1: không merge; mở `python -m lab9.trace_case` trên trial fail, tìm bước sai đầu tiên, sửa agent (không sửa ngưỡng, không sửa report).
