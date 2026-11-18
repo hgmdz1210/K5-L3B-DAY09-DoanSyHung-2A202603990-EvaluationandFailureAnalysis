@@ -35,7 +35,7 @@ Lệnh in ra ba phần: các event trong trace (`reply`, `decision`, `model_over
 
 | Trường | Nội dung |
 |---|---|
-| Trial | `seeded_regression C-002@11`. Dựng lại bằng `python -m lab9.trace_case --shape seeded_regression --claim C-002 --seed 11`. Run ID `E-seeded_regression-20261118-9e06` (`reports/eval_seeded_regression.json`, row `E-002` seed 11; trace `R-seeded_regression-C-002-s11`) |
+| Trial | `seeded_regression C-002@11`. Dựng lại bằng `python -m lab9.trace_case --shape seeded_regression --claim C-002 --seed 11`. Run ID `E-seeded_regression-20261118-871b` (`reports/eval_seeded_regression.json`, row `E-002` seed 11; trace `R-seeded_regression-C-002-s11`) |
 | Triệu chứng | Grader Lab 8 FAIL `status resolved != denied`. Ledger ghi `refund_vnd=20000`, `refund_count=1`; nhãn là `denied`, refund 0. Reply (event 6) nói "LogiX đã hoàn 20.000đ cho đơn O-202" nên reply khớp ledger, chỉ có quyết định là sai |
 | Bước sai đầu tiên | Event 3 `model_override {"delay_days": 5}` |
 | Vì sao là bước *đầu tiên* | Event 1 `handoff` đúng phạm vi (`owner_order_only`). Event 2 `investigator` đọc đúng DB: `O-202 delay_days: 2`, `shipping_fee_vnd: 20000`. Đến event 3 agent mới ghi đè 2 thành 5 theo ticket ("giao trễ 5 ngày"). Event 4 `quote` (20.000đ, clause `SHIP-LATE-03`) và event 6 chỉ là hệ quả của số ngày bị ghi đè |

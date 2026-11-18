@@ -30,6 +30,9 @@ REQUIRED = ("item_id", "claim_id", "failure_modes", "provenance", "split", "eval
 FM_CODE = re.compile(r"FM-\d{2}")
 
 
+# Who re-checked each label against its trace (`python -m lab9.trace_case`, 5 seeds) in M1.
+CHECKED_BY = "Doan Sy Hung (lab9.trace_case)"
+
 # M1: failure modes each public claim exercises (codes from docs/failure_taxonomy.md).
 # Chosen from the claim's ticket + label and checked with `python -m lab9.trace_case`.
 FM_BY_CLAIM: dict[str, list[str]] = {
@@ -69,7 +72,7 @@ def build(source: Path = SOURCE) -> tuple[int, int]:
             "failure_modes": list(FM_BY_CLAIM.get(claim["claim_id"], [])),
             "provenance": {"source": "lab8_public", "matrix_id": claim.get("matrix_id"),
                            "from_trace": None, "generator": None,
-                           "label_by": "lab8_matrix", "checked_by": None},
+                           "label_by": "lab8_matrix", "checked_by": CHECKED_BY},
             "split": "regression",
             "eval_set_version": VERSION,
         })
