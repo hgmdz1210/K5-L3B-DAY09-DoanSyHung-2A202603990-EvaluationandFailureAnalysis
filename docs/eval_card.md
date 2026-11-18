@@ -3,7 +3,7 @@
 Card này đi kèm mỗi báo cáo và được dùng lại ở Day 10. Mọi con số dưới đây lấy từ report do `python -m lab9.eval` sinh ra (dẫn run ID), không gõ tay.
 
 - **Run ID / eval set SHA:** baseline `E-swarm-20261118-50fa` · eval set `50fa2fc800aa` (`src/reports/baseline_v1.json`)
-- **Phiên bản:** code: nhánh `starter/d09` (code Day 8 gốc + `src/lab9/` đã hoàn thành M1–M4) · eval set v1 (sha `50fa2fc800aa`) · `metric_spec_version` 1.0 · grader `lab9.graders.GRADERS` (cùng commit) · seeds 11/22/33/44/55 · MockLLM · Python 3.12 (máy) / 3.13 (CI)
+- **Phiên bản:** code: nhánh `main` (code Day 8 gốc + `src/lab9/` đã hoàn thành M1–M7) · eval set v1 (sha `50fa2fc800aa`) · `metric_spec_version` 1.0 · grader `lab9.graders.GRADERS` (cùng commit) · seeds 11/22/33/44/55 · MockLLM · Python 3.12 (máy) / 3.13 (CI)
 - **Eval set:** v1, 14 item × 5 seed = 70 trial/shape, nguồn `lab8_public` (ma trận T01–T14); nhãn tách riêng trong `labels_v1.json`, không inline trong item. Mỗi item có `failure_modes` theo `docs/failure_taxonomy.md`; `provenance.checked_by` ghi người đã đối chiếu nhãn với trace (`lab9.trace_case`, 5 seed). `evalset --check`: 0 problem.
 
 ## Metric & ngưỡng (trích `config/metric_spec.yaml`)
@@ -30,6 +30,8 @@ Card này đi kèm mỗi báo cáo và được dùng lại ở Day 10. Mọi co
 | `honest_refactor` (`E-honest_refactor-20261118-50fa`) | 1.0 | +0.014 [+0.000, +0.043] | 1.0 | 1.0 | 0 / 0 | exit 0 (không báo nhầm) |
 | `flaky_regression` (`E-flaky_regression-20261118-50fa`) | 0.9 | −0.086 [−0.143, −0.014] | 0.9429 | 1.0 | 0 / 0 | exit 1 (`refund_amount_correct, pass_rate`) |
 | `slice_regression` (`E-slice_regression-20261118-50fa`) | 0.9571 | −0.029 [−0.129, +0.043] | 0.9571 | 1.0 | 0 / 0 | **exit 0: lọt qua gate v1** |
+
+Report của từng dòng (trong `src/reports/`, sinh bằng `python -m lab9.eval --spec config/metric_spec.yaml`): `baseline_v1.json`, `eval_fixed.json`, `eval_seeded_regression.json`, `eval_honest_refactor.json`, `eval_flaky_regression.json`, `eval_slice_regression_v1.json`. Riêng `slice_regression` ghi ra `eval_slice_regression_v1.json` vì `eval_slice_regression.json` là bản chạy trên spec v2 (`E-slice_regression-20261118-781d`, dùng cho M7).
 
 - Baseline `swarm` không hoàn hảo: 1/70 trial fail (`C-002@55`), vì shape tham chiếu tin ticket khi `seed % 5 == 0` (FM-03).
 - Grader M3 trên các variant lỗi phát hiện 35/35 trace lỗi (30/30 trial grader Lab 8 FAIL, cộng 5 trial reply sai ledger mà grader Lab 8 bỏ lọt: `seeded_regression C-008@*`), báo nhầm 0/70 trên `fixed` và 0/70 trên `honest_refactor`.
