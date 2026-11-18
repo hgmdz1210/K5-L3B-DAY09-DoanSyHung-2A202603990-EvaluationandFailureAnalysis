@@ -79,13 +79,40 @@ def paired_bootstrap(a: Sequence[float], b: Sequence[float], *, n_resamples: int
 def pass_at_k(n: int, c: int, k: int) -> float:
     """Probability that AT LEAST ONE of k trials drawn from n (c of them passing) passes.
     Unbiased estimator (Chen et al. 2021): 1 - C(n-c, k) / C(n, k). Raise ValueError if k > n."""
-    # TODO M6
-    raise NotImplementedError
+    from math import comb
+
+    _check_nck(n, c, k)
+    if n - c < k:          # every k-subset contains at least one pass
+        return 1.0
+    return 1.0 - comb(n - c, k) / comb(n, k)
+
+
+def _check_nck(n: int, c: int, k: int) -> None:
+    """Reject arguments the estimators are not defined for, instead of returning a plausible number."""
+    import operator
+
+    vals = {}
+    for name, v in (("n", n), ("c", c), ("k", k)):
+        try:
+            if isinstance(v, bool):
+                raise TypeError
+            vals[name] = operator.index(v)       # int, numpy int: ok; 2.0, 2.5, "2": rejected
+        except TypeError:
+            raise ValueError(f"{name} must be an integer, got {v!r}") from None
+    n, c, k = vals["n"], vals["c"], vals["k"]
+    if n < 1:
+        raise ValueError(f"n must be >= 1, got {n}")
+    if not 0 <= c <= n:
+        raise ValueError(f"c must be in [0, n={n}], got {c}")
+    if not 1 <= k <= n:
+        raise ValueError(f"k must be in [1, n={n}], got {k}")
 
 
 def pass_hat_k(n: int, c: int, k: int) -> float:
     """pass^k (tau-bench, Yao et al. 2024): probability that ALL k trials drawn from n pass.
     Unbiased estimator: C(c, k) / C(n, k). Raise ValueError if k > n.
     pass^k <= pass@1 <= pass@k; a reliable agent keeps pass^k close to pass@1."""
-    # TODO M6
-    raise NotImplementedError
+    from math import comb
+
+    _check_nck(n, c, k)
+    return comb(c, k) / comb(n, k)       # comb(c, k) == 0 when k > c
