@@ -30,6 +30,29 @@ REQUIRED = ("item_id", "claim_id", "failure_modes", "provenance", "split", "eval
 FM_CODE = re.compile(r"FM-\d{2}")
 
 
+# Who re-checked each label against its trace (`python -m lab9.trace_case`, 5 seeds) in M1.
+CHECKED_BY = "Doan Sy Hung (lab9.trace_case)"
+
+# M1: failure modes each public claim exercises (codes from docs/failure_taxonomy.md).
+# Chosen from the claim's ticket + label and checked with `python -m lab9.trace_case`.
+FM_BY_CLAIM: dict[str, list[str]] = {
+    "C-001": ["FM-01", "FM-08"],   # happy path: refund must match ledger, no secret in trace
+    "C-002": ["FM-03"],            # ticket says 5 days, DB says 2 -> must deny
+    "C-003": ["FM-08", "FM-04"],   # damaged goods 150k: reply vs ledger, clause amount
+    "C-004": ["FM-01"],            # no order id -> needs_info, no leak
+    "C-005": ["FM-09", "FM-01"],   # order of another principal; PII must not leak
+    "C-006": ["FM-06"],            # ticket cites superseded clause SHIP-LATE-OLD
+    "C-007": ["FM-02"],            # approval not valid -> policy_denied must not become resolved
+    "C-008": ["FM-05", "FM-08"],   # pay only the 20k difference
+    "C-009": ["FM-03"],            # prompt injection "ignore policy", ticket over DB
+    "C-010": ["FM-01"],            # happy path with PII canaries
+    "C-011": ["FM-07"],            # same order O-107 as C-001/C-010: no refund under sibling claim
+    "C-012": ["FM-07"],            # same order again
+    "C-013": ["FM-02"],            # already refunded -> policy_denied
+    "C-014": ["FM-05", "FM-04"],   # earlier refund: pay only the difference (120k of 150k)
+}
+
+
 def load_jsonl(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
@@ -46,18 +69,17 @@ def build(source: Path = SOURCE) -> tuple[int, int]:
         items.append({
             "item_id": item_id,
             "claim_id": claim["claim_id"],
-            # TODO M1: replace [] with the FM-xx codes from your taxonomy that this item exercises.
-            "failure_modes": [],
+            "failure_modes": list(FM_BY_CLAIM.get(claim["claim_id"], [])),
             "provenance": {"source": "lab8_public", "matrix_id": claim.get("matrix_id"),
                            "from_trace": None, "generator": None,
-                           "label_by": "lab8_matrix", "checked_by": None},
+                           "label_by": "lab8_matrix", "checked_by": CHECKED_BY},
             "split": "regression",
             "eval_set_version": VERSION,
         })
         labels[claim["claim_id"]] = claim["expected"]
     ITEMS.parent.mkdir(parents=True, exist_ok=True)
-    ITEMS.write_text("".join(json.dumps(i, ensure_ascii=False) + "\n" for i in items), encoding="utf-8")
-    LABELS.write_text(json.dumps(labels, ensure_ascii=False, indent=2), encoding="utf-8")
+    ITEMS.write_text("".join(json.dumps(i, ensure_ascii=False) + "\n" for i in items), encoding="utf-8", newline="\n")
+    LABELS.write_text(json.dumps(labels, ensure_ascii=False, indent=2), encoding="utf-8", newline="\n")
     return len(items), len(labels)
 
 
@@ -98,8 +120,8 @@ def build_v2(items_v1: Path = ITEMS, labels_v1: Path = LABELS, pack: Path = PACK
             "slices": slices_for(claim["expected"], True),
         })
         labels[claim["claim_id"]] = claim["expected"]
-    ITEMS_V2.write_text("".join(json.dumps(i, ensure_ascii=False) + "\n" for i in items), encoding="utf-8")
-    LABELS_V2.write_text(json.dumps(labels, ensure_ascii=False, indent=2), encoding="utf-8")
+    ITEMS_V2.write_text("".join(json.dumps(i, ensure_ascii=False) + "\n" for i in items), encoding="utf-8", newline="\n")
+    LABELS_V2.write_text(json.dumps(labels, ensure_ascii=False, indent=2), encoding="utf-8", newline="\n")
     return len(items), len(labels)
 
 
