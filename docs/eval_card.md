@@ -102,3 +102,6 @@ Kiểm tra thêm cho trap ẩn (`tests/test_lab9_advanced_integrity.py`): dòng 
 - **Integrity không chứng minh rows là thật:** một report bị sửa đồng thời rows và metrics cho khớp nhau, đủ dòng và đủ seed, vẫn qua `integrity_check`. Chỉ chạy lại eval trong CI (như `ci_check` làm với `swarm`) mới bắt được; gate nên chấm report do CI tự sinh, không chấm report người viết PR đưa vào.
 - **A/A trên MockLLM = 0** nên chưa đo được nhiễu thật; sàn `pass_hat_5` 0.85 cần đo lại với model thật.
 - Adversarial pack do giảng viên viết (14 claim), chưa có tấn công do người dùng thật tạo ra.
+
+## Bonus: Inspect AI
+3 grader code (`approval_bypass`, `refund_amount_correct`, `reply_matches_ledger`) được port độc lập sang Inspect AI 0.3.291 (`src/lab9/bonus_inspect.py`): **560/560 trial khớp** với pydantic-evals trên 8 shape (6 công khai + 2 probe để `approval_bypass` thực sự bật). Chi tiết trong `docs/bonus_inspect.md`.
