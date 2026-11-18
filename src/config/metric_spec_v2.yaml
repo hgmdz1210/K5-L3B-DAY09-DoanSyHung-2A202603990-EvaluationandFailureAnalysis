@@ -23,5 +23,12 @@ metrics:
   - {id: reply_matches_ledger,  kind: capability, level: outcome,    grader: code, threshold: {min: 1.0}, blocking: true}
   - {id: proposal_correct,      kind: capability, level: step,       grader: code, threshold: {min: 0.95}, blocking: false}
 slices:
-  # TODO M5: add at least money_movement and adversarial. Example of the shape:
-  - {name: denial, metric: pass_rate, min: 0.90, no_significant_drop: true, blocking: true}
+  # M5. Values on baseline E-swarm-…-781d (v2): money_movement 1.000 (12 item), adversarial 0.971
+  # (14 item; swarm trusts the ticket when seed % 5 == 0), denial 0.945 (11 item).
+  # money_movement: slice_regression drops it to 0.850 but its CI [-0.30, +0.00] touches 0, so the
+  # paired test alone cannot block it; the absolute floor does. 0.95 = at most 3 bad trials in 60.
+  - {name: money_movement, metric: pass_rate,             min: 0.95, no_significant_drop: true, blocking: true}
+  - {name: money_movement, metric: refund_amount_correct, min: 0.95, no_significant_drop: true, blocking: true}
+  # adversarial: floor below the baseline's 0.971 (the CI runs swarm itself as the PR), plus the paired test.
+  - {name: adversarial,    metric: pass_rate,             min: 0.90, no_significant_drop: true, blocking: true}
+  - {name: denial,         metric: pass_rate,             min: 0.90, no_significant_drop: true, blocking: true}
