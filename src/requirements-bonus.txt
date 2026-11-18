@@ -1,0 +1,2 @@
+# Bonus only (not installed by CI): Inspect AI port of 3 graders, see docs/bonus_inspect.md
+inspect-ai==0.3.291
